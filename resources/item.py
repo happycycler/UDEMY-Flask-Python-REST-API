@@ -1,6 +1,6 @@
 from flask_restful import Resource, reqparse
 from flask_jwt import jwt_required
-import simplejson as json
+# import simplejson as json
 
 from models.item import ItemModel
 from models.store import StoreModel
