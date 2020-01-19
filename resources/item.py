@@ -6,29 +6,38 @@ from models.item import ItemModel
 from models.store import StoreModel
 
 class Item(Resource):
-    parser = reqparse.RequestParser()
-    parser.add_argument(
+    postparser = reqparse.RequestParser()
+    postparser.add_argument(
         'price',
         type=float,
         required=True,
         help='Price is required.'
     )
-    parser.add_argument(
+    postparser.add_argument(
         'store_id',
         type=int,
         required=True,
         help='Store ID is required.'
     )
 
-    @jwt_required()
+    getparser = reqparse.RequestParser()
+    getparser.add_argument(
+        'store_id',
+        type=int,
+        required=True,
+        help='Store ID is required.'
+    )
+
+    # @jwt_required()
     def get(self, name):
-        item = ItemModel.find_by_name(name)
+        data = Item.getparser.parse_args()
+        item = ItemModel.find_by_name(name, data['store_id'])
         if item:
             return item.json()
         return {'message': "An item with the name '{}' was not found.".format(name)}, 400
 
     def post(self, name):
-        data = Item.parser.parse_args()
+        data = Item.postparser.parse_args()
 
         # Check to see if the store exists.
         store = StoreModel.find_by_id(data['store_id'])
@@ -49,7 +58,7 @@ class Item(Resource):
         return item.json(), 201
 
     def delete(self, name):
-        data = Item.parser.parse_args()
+        data = Item.postparser.parse_args()
 
         item = ItemModel.find_by_name(name, data['store_id'])
         if item:
@@ -58,7 +67,7 @@ class Item(Resource):
         return {'message': "An item with the name '{}' was not found.".format(name)}, 400
 
     def put(self, name):
-        data = Item.parser.parse_args()
+        data = Item.postparser.parse_args()
 
         # Check to see if the store exists.
         store = StoreModel.find_by_id(data['store_id'])
