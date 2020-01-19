@@ -32,6 +32,7 @@ class Item(Resource):
     def get(self, name):
         data = Item.getparser.parse_args()
         item = ItemModel.find_by_name(name, data['store_id'])
+        # item = ItemModel.find_by_name(name)
         if item:
             return item.json()
         return {'message': "An item with the name '{}' was not found.".format(name)}, 400

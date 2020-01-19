@@ -22,6 +22,7 @@ class ItemModel(db.Model):
     @classmethod
     def find_by_name(cls, name, store_id):
         return cls.query.filter_by(name=name, store_id=store_id).first()
+        # return cls.query.filter_by(name=name).first()
 
     # @classmethod
     # def find_by_name(cls, name):
