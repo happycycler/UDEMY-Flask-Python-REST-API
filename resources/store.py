@@ -43,7 +43,8 @@ class Store(Resource):
         if store is None:
             store = StoreModel(name)
         else:
-            store.name = data['name']
+            # store.name = data['name']
+            return {'message': "A store with the name '{}' was not found.".format(data['name'])}, 400
 
         store.save_to_db()
         return store.json()
