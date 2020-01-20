@@ -28,6 +28,14 @@ class Item(Resource):
         help='Store ID is required.'
     )
 
+    delparser = reqparse.RequestParser()
+    delparser.add_argument(
+        'store_id',
+        type=int,
+        required=True,
+        help='Store ID is required.'
+    )
+
     # @jwt_required()
     def get(self, name):
         data = Item.getparser.parse_args()
@@ -59,7 +67,7 @@ class Item(Resource):
         return item.json(), 201
 
     def delete(self, name):
-        data = Item.postparser.parse_args()
+        data = Item.delparser.parse_args()
 
         item = ItemModel.find_by_name(name, data['store_id'])
         if item:
