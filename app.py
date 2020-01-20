@@ -15,7 +15,7 @@ app = Flask(__name__)
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root@localhost/api_db'
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://mrprice:HighwayToH3!!@107.180.51.82/oslapi'
 
-app.config['SQLALCHEMY_DATABASE_URI'] =  os.environ.get('DATABASE_URL', 'sqlite:///data.db')
+app.config['SQLALCHEMY_DATABASE_URI'] =  os.environ.get('DATABASE_URL', 'mysql+pymysql://mrprice:HighwayToH3!!@107.180.51.82/oslapi')
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = 'secretkey'
@@ -26,7 +26,7 @@ jwt = JWT(app, authenticate, identity)
 api.add_resource(Item, '/item/<string:name>')
 api.add_resource(ItemList, '/items')
 api.add_resource(User, '/user/<string:username>')
-api.add_resource(UserRegister, '/reqister')
+api.add_resource(UserRegister, '/register')
 api.add_resource(UserList, '/users')
 api.add_resource(Store, '/store/<string:name>')
 api.add_resource(StoreList, '/stores')
