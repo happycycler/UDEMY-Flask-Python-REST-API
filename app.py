@@ -26,11 +26,12 @@ jwt = JWT(app, authenticate, identity)
 
 api.add_resource(Item, '/item/<string:name>')
 api.add_resource(ItemList, '/items')
-api.add_resource(User, '/user/<string:username>')
 api.add_resource(UserRegister, '/register')
-api.add_resource(UserList, '/users')
 api.add_resource(Store, '/store/<string:name>')
 api.add_resource(StoreList, '/stores')
+
+api.add_resource(User, '/user')
+api.add_resource(UserList, '/users')
 api.add_resource(Course, '/class')
 api.add_resource(CourseList, '/classes')
 
