@@ -28,7 +28,7 @@ class User(Resource):
             user = UserModel.find_by_username(data['username'])
             if user:
                 return user.json()
-            return {'message': "No user with username '{}' were found.".format(data['username'])}, 400
+            return {'message': "A user with username '{}' was not found.".format(data['username'])}, 400
         else:
             return {'message': "Parameter 'id' or 'username' is required."}, 400
 

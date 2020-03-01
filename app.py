@@ -9,6 +9,7 @@ from resources.user import User, UserRegister, UserList
 from resources.item import Item, ItemList
 from resources.store import Store, StoreList
 from resources.course import Course, CourseList
+from resources.org import Org, OrgList
 
 app = Flask(__name__)
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
@@ -30,10 +31,12 @@ api.add_resource(UserRegister, '/register')
 api.add_resource(Store, '/store/<string:name>')
 api.add_resource(StoreList, '/stores')
 
-api.add_resource(User, '/user')
-api.add_resource(UserList, '/users')
 api.add_resource(Course, '/class')
 api.add_resource(CourseList, '/classes')
+api.add_resource(Org, '/org')
+api.add_resource(OrgList, '/orgs')
+api.add_resource(User, '/user')
+api.add_resource(UserList, '/users')
 
 if __name__ == '__main__':
     from db import db
