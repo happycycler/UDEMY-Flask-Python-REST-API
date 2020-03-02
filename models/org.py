@@ -14,6 +14,8 @@ class OrgModel(db.Model):
     phone = db.Column(db.String(12))
     status = db.Column(db.String(10))
 
+    courses = db.relationship('CourseModel', lazy='dynamic')
+
     def __init__(self, name, address1, address2, city, state, zip, phone, status):
         self.name = name
         self.address1 = address1

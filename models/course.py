@@ -15,6 +15,12 @@ class CourseModel(db.Model):
     classdays = db.Column(db.Text)
     userid = db.Column(db.Integer)
 
+    userid = db.Column(db.Integer, db.ForeignKey('users.id'))
+    user = db.relationship('UserModel')
+
+    orgid = db.Column(db.Integer, db.ForeignKey('orgs.id'))
+    org = db.relationship('OrgModel')
+
     def __init__(self, orgid, name, starttime, endtime, classdate, startdate, enddate, classdays, userid):
         self.orgid = orgid
         self.name = name
@@ -29,6 +35,7 @@ class CourseModel(db.Model):
     def json(self):
         return {"id": self.id,
                 "orgid": self.orgid,
+                "org": self.org.name,
                 "name": self.name,
                 "starttime": self.starttime.strftime("%H:%M"),
                 "endtime": self.endtime.strftime("%H:%M"),
@@ -36,7 +43,9 @@ class CourseModel(db.Model):
                 "startdate": self.startdate.strftime("%m/%d/%Y"),
                 "enddate": self.enddate.strftime("%m/%d/%Y"),
                 "classdays": self.classdays,
-                "userid": self.userid}
+                "userid": self.userid,
+                "instructor": self.user.firstname + " " + self.user.lastname}
+
 
     def save_to_db(self):
         db.session.add(self)

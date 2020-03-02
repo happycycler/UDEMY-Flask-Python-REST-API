@@ -12,11 +12,20 @@ class UserModel(db.Model):
     validationcode = db.Column(db.String(255))
     active = db.Column(db.Integer)
     sendemailfl = db.Column(db.Integer)
-    cellcarrierid = db.Column(db.Integer)
+    carrierid = db.Column(db.Integer)
     cellphone = db.Column(db.String(25))
     sendtextfl = db.Column(db.Integer)
+    privid = db.Column(db.Integer)
 
-    def __init__(self, firstname, lastname, username, email, password, validationcode, active, sendemailfl, cellcarrierid, cellphone, sendtextfl):
+    carrierid = db.Column(db.Integer, db.ForeignKey('carriers.id'))
+    carrier = db.relationship('CarrierModel')
+
+    privid = db.Column(db.Integer, db.ForeignKey('privs.id'))
+    priv = db.relationship('PrivModel')
+
+    coursers = db.relationship('CourseModel', lazy='dynamic')
+
+    def __init__(self, firstname, lastname, username, email, password, validationcode, active, sendemailfl, carrierid, cellphone, sendtextfl, privid):
         self.firstname = firstname
         self.lastname = lastname
         self.username = username
@@ -25,9 +34,10 @@ class UserModel(db.Model):
         self.validationcode = validationcode
         self.active = active
         self.sendemailfl = sendemailfl
-        self.cellcarrierid = cellcarrierid
+        self.carrierid = carrierid
         self.cellphone = cellphone
         self.sendtextfl = sendtextfl
+        self.privid = privid
 
     def json(self):
         return {"id": self.id,
@@ -39,9 +49,12 @@ class UserModel(db.Model):
                 "validationcode": self.validationcode,
                 "active": self.active,
                 "sendmailfl": self.sendemailfl,
-                "cellcarrierid": self.cellcarrierid,
+                "carrierid": self.carrierid,
+                "carrier": self.carrier.carriername,
                 "cellphone": self.cellphone,
-                "sendtextfl": self.sendtextfl}
+                "sendtextfl": self.sendtextfl,
+                "privid": self.privid,
+                "priv": self.priv.desc}
 
     def save_to_db(self):
         db.session.add(self)
