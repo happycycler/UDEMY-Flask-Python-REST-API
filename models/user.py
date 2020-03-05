@@ -25,6 +25,9 @@ class UserModel(db.Model):
 
     coursers = db.relationship('CourseModel', lazy='dynamic')
 
+    requester = db.relationship('SubrequestModel', backref='requestuser', lazy='dynamic', foreign_keys='SubrequestModel.requestuserid')
+    acceptor = db.relationship('SubrequestModel', backref='acceptuser', lazy='dynamic', foreign_keys='SubrequestModel.acceptuserid')
+
     def __init__(self, firstname, lastname, username, email, password, validationcode, active, sendemailfl, carrierid, cellphone, sendtextfl, privid):
         self.firstname = firstname
         self.lastname = lastname
@@ -70,4 +73,4 @@ class UserModel(db.Model):
 
     @classmethod
     def find_by_id(cls, _id):
-        return cls.query.filter_by(id=_id).first()
+        return cls.query.filter_by(id=_id).all()

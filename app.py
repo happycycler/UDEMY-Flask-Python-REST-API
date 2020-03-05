@@ -12,6 +12,7 @@ from resources.course import Course, CourseList
 from resources.org import Org, OrgList
 from resources.carrier import Carrier, CarrierList
 from resources.priv import Priv, PrivList
+from resources.subrequest import Subrequest, SubrequestList
 
 app = Flask(__name__)
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
@@ -43,6 +44,8 @@ api.add_resource(Carrier, '/carrier')
 api.add_resource(CarrierList, '/carriers')
 api.add_resource(Priv, '/priv')
 api.add_resource(PrivList, '/privs')
+api.add_resource(Subrequest, '/subrequest')
+api.add_resource(SubrequestList, '/subrequests')
 
 if __name__ == '__main__':
     from db import db

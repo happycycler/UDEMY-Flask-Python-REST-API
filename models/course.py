@@ -21,6 +21,8 @@ class CourseModel(db.Model):
     orgid = db.Column(db.Integer, db.ForeignKey('orgs.id'))
     org = db.relationship('OrgModel')
 
+    subrequests = db.relationship('SubrequestModel', lazy='dynamic')
+
     def __init__(self, orgid, name, starttime, endtime, classdate, startdate, enddate, classdays, userid):
         self.orgid = orgid
         self.name = name
@@ -37,11 +39,11 @@ class CourseModel(db.Model):
                 "orgid": self.orgid,
                 "org": self.org.name,
                 "name": self.name,
-                "starttime": self.starttime.strftime("%H:%M"),
-                "endtime": self.endtime.strftime("%H:%M"),
-                "classdate": self.classdate.strftime("%m/%d/%Y"),
-                "startdate": self.startdate.strftime("%m/%d/%Y"),
-                "enddate": self.enddate.strftime("%m/%d/%Y"),
+                "starttime": self.starttime.strftime("%I:%M %p"),
+                "endtime": self.endtime.strftime("%I:%M %p"),
+                "classdate": self.classdate.__str__(),
+                "startdate": self.startdate.__str__(),
+                "enddate": self.enddate.__str__(),
                 "classdays": self.classdays,
                 "userid": self.userid,
                 "instructor": self.user.firstname + " " + self.user.lastname}
