@@ -14,7 +14,10 @@ class OrgModel(db.Model):
     phone = db.Column(db.String(12))
     status = db.Column(db.String(10))
 
-    courses = db.relationship('CourseModel', lazy='dynamic')
+    courseorg = db.relationship('CourseModel', backref='org', lazy='dynamic',
+                                foreign_keys='CourseModel.orgid')
+    orguserorg = db.relationship('OrgUserModel', backref='org', lazy='dynamic',
+                                foreign_keys='OrgUserModel.orgid')
 
     def __init__(self, name, address1, address2, city, state, zip, phone, status):
         self.name = name

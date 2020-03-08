@@ -15,21 +15,43 @@ class Subrequest(Resource):
         required=False,
         help='Class ID is required.'
     )
+    getparser.add_argument(
+        'requestuserid',
+        type=int,
+        required=False,
+        help='Request User ID is required.'
+    )
+    getparser.add_argument(
+        'acceptuserid',
+        type=int,
+        required=False,
+        help='Accept User ID is required.'
+    )
 
     def get(self):
         data = Subrequest.getparser.parse_args()
-        if data['username'] is not None:
+        if data['id'] is not None:
             subrequest = SubrequestModel.find_by_id(data['id'])
             if subrequest:
                 return subrequest.json()
             return {'message': "A subrequest with id '{}' was not found.".format(data['id'])}, 400
         elif data['classid'] is not None:
             subrequests = SubrequestModel.find_by_classid(data['classid'])
-            if subrequest:
+            if subrequests:
                 return {'subrequests': [subrequest.json() for subrequest in subrequests]}
             return {'message': "A subrequest with classid '{}' was not found.".format(data['classid'])}, 400
+        elif data['requestuserid'] is not None:
+            subrequests = SubrequestModel.find_by_requestuserid(data['requestuserid'])
+            if subrequests:
+                return {'subrequests': [subrequest.json() for subrequest in subrequests]}
+            return {'message': "A subrequest with requestuserid '{}' was not found.".format(data['requestuserid'])}, 400
+        elif data['acceptuserid'] is not None:
+            subrequests = SubrequestModel.find_by_acceptuserid(data['acceptuserid'])
+            if subrequests:
+                return {'subrequests': [subrequest.json() for subrequest in subrequests]}
+            return {'message': "A subrequest with acceptuserid '{}' was not found.".format(data['acceptuserid'])}, 400
         else:
-            return {'message': "Parameter 'id' or 'name' is required."}, 400
+            return {'message': "Parameter 'id', 'name', 'requestuserid', or 'acceptuserid' is required."}, 400
 
     def post(self, classid):
         subrequest = SubrequestModel.find_by_classid(classid)

@@ -5,7 +5,7 @@ class CourseModel(db.Model):
     __tablename__ = 'classes'
 
     id = db.Column(db.Integer, primary_key=True)
-    orgid = db.Column(db.Integer)
+    orgid = db.Column(db.Integer, db.ForeignKey('orgs.id'))
     name = db.Column(db.String(255))
     starttime = db.Column(db.Time)
     endtime = db.Column(db.Time)
@@ -13,15 +13,10 @@ class CourseModel(db.Model):
     startdate = db.Column(db.Date)
     enddate = db.Column(db.Date)
     classdays = db.Column(db.Text)
-    userid = db.Column(db.Integer)
-
     userid = db.Column(db.Integer, db.ForeignKey('users.id'))
-    user = db.relationship('UserModel')
 
-    orgid = db.Column(db.Integer, db.ForeignKey('orgs.id'))
-    org = db.relationship('OrgModel')
-
-    subrequests = db.relationship('SubrequestModel', lazy='dynamic')
+    course = db.relationship('SubrequestModel', backref='course', lazy='dynamic',
+                                foreign_keys='SubrequestModel.classid')
 
     def __init__(self, orgid, name, starttime, endtime, classdate, startdate, enddate, classdays, userid):
         self.orgid = orgid
@@ -46,7 +41,7 @@ class CourseModel(db.Model):
                 "enddate": self.enddate.__str__(),
                 "classdays": self.classdays,
                 "userid": self.userid,
-                "instructor": self.user.firstname + " " + self.user.lastname}
+                "instructor": self.instructor.firstname + " " + self.instructor.lastname}
 
 
     def save_to_db(self):

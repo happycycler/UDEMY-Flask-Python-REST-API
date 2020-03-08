@@ -12,21 +12,19 @@ class UserModel(db.Model):
     validationcode = db.Column(db.String(255))
     active = db.Column(db.Integer)
     sendemailfl = db.Column(db.Integer)
-    carrierid = db.Column(db.Integer)
+    carrierid = db.Column(db.Integer, db.ForeignKey('carriers.id'))
     cellphone = db.Column(db.String(25))
     sendtextfl = db.Column(db.Integer)
-    privid = db.Column(db.Integer)
-
-    carrierid = db.Column(db.Integer, db.ForeignKey('carriers.id'))
-    carrier = db.relationship('CarrierModel')
-
     privid = db.Column(db.Integer, db.ForeignKey('privs.id'))
-    priv = db.relationship('PrivModel')
 
-    coursers = db.relationship('CourseModel', lazy='dynamic')
-
-    requester = db.relationship('SubrequestModel', backref='requestuser', lazy='dynamic', foreign_keys='SubrequestModel.requestuserid')
-    acceptor = db.relationship('SubrequestModel', backref='acceptuser', lazy='dynamic', foreign_keys='SubrequestModel.acceptuserid')
+    instructor = db.relationship('CourseModel', backref='instructor', lazy='dynamic',
+                                    foreign_keys='CourseModel.userid')
+    requester = db.relationship('SubrequestModel', backref='requestuser', lazy='dynamic',
+                                    foreign_keys='SubrequestModel.requestuserid')
+    acceptor = db.relationship('SubrequestModel', backref='acceptuser', lazy='dynamic',
+                                    foreign_keys='SubrequestModel.acceptuserid')
+    orguseruser = db.relationship('OrgUserModel', backref='user', lazy='dynamic',
+                                    foreign_keys='OrgUserModel.userid')
 
     def __init__(self, firstname, lastname, username, email, password, validationcode, active, sendemailfl, carrierid, cellphone, sendtextfl, privid):
         self.firstname = firstname

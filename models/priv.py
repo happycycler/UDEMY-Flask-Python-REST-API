@@ -7,7 +7,8 @@ class PrivModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     desc = db.Column(db.String(25))
 
-    users = db.relationship('UserModel', lazy='dynamic')
+    userpriv = db.relationship('UserModel', backref='priv', lazy='dynamic',
+                                 foreign_keys='UserModel.privid')
 
     def __init__(self, desc):
         self.desc = desc

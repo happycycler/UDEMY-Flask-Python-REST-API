@@ -8,7 +8,8 @@ class CarrierModel(db.Model):
     carriername = db.Column(db.String(25))
     carrierdomain = db.Column(db.String(25))
 
-    users = db.relationship('UserModel', lazy='dynamic')
+    usercarrier = db.relationship('UserModel', backref='carrier', lazy='dynamic',
+                                 foreign_keys='UserModel.carrierid')
 
     def __init__(self, carriername, carrierdomain):
         self.carriername = carriername

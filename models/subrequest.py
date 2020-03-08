@@ -5,14 +5,11 @@ class SubrequestModel(db.Model):
     __tablename__ = 'subrequests'
 
     id = db.Column(db.Integer, primary_key=True)
-    classid = db.Column(db.Integer)
+    classid = db.Column(db.Integer, db.ForeignKey('classes.id'))
     requestuserid = db.Column(db.Integer, db.ForeignKey('users.id'))
     acceptuserid = db.Column(db.Integer, db.ForeignKey('users.id'))
     requestdate = db.Column(db.String)
     acceptdate = db.Column(db.String)
-
-    classid = db.Column(db.Integer, db.ForeignKey('classes.id'))
-    course = db.relationship('CourseModel')
 
     def __init__(self, classid, requestuserid, acceptuserid, requestdate, acceptdate):
         self.classid = classid
@@ -51,4 +48,12 @@ class SubrequestModel(db.Model):
 
     @classmethod
     def find_by_classid(cls, classid):
-        return cls.query.filter_by(classid=classid).first()
+        return cls.query.filter_by(classid=classid).all()
+
+    @classmethod
+    def find_by_requestuserid(cls, requestuserid):
+        return cls.query.filter_by(requestuserid=requestuserid).all()
+
+    @classmethod
+    def find_by_acceptuserid(cls, acceptuserid):
+        return cls.query.filter_by(acceptuserid=acceptuserid).all()

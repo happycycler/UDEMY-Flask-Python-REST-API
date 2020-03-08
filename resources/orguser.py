@@ -1,38 +1,38 @@
 from flask_restful import Resource, reqparse
-from models.priv import PrivModel
+from models.orguser import OrgUserModel
 
-class Priv(Resource):
+class OrgUser(Resource):
     getparser = reqparse.RequestParser()
     getparser.add_argument(
-        'id',
+        'orgid',
         type=int,
         required=False,
-        help='Priv ID is required.'
+        help='Org ID is required.'
     )
     getparser.add_argument(
-        'name',
+        'userid',
         type=str,
         required=False,
-        help='Priv Name is required.'
+        help='User ID is required.'
     )
 
     def get(self):
-        data = Priv.getparser.parse_args()
-        if data['id'] is not None:
-            privilege = PrivModel.find_by_id(data['id'])
-            if privilege:
-                return privilege.json()
-            return {'message': "A privilege with id '{}' was not found.".format(data['id'])}, 400
-        elif data['name'] is not None:
-            privilege = PrivModel.find_by_name(data['name'].upper())
-            if privilege:
-                return privilege.json()
-            return {'message': "A privilege with name '{}' was not found.".format(data['name'])}, 400
+        data = OrgUser.getparser.parse_args()
+        if data['orgid'] is not None:
+            orgs = OrgUserModel.find_by_orgid(data['orgid'])
+            if orgs:
+                return {'orgs': [org.json() for org in orgs]}
+            return {'message': "An org with id '{}' was not found.".format(data['orgid'])}, 400
+        elif data['userid'] is not None:
+            users = OrgUserModel.find_by_userid(data['userid'].upper())
+            if users:
+                return {'users': [user.json() for user in users]}
+            return {'message': "A user with id '{}' was not found.".format(data['name'])}, 400
         else:
-            return {'message': "Parameter 'id' or 'name' is required."}, 400
+            return {'message': "Parameter 'orgid' or 'userid' is required."}, 400
 
     def post(self, name):
-        privilege = PrivModel.find_by_name(name)
+        privilege = OrgUserModel.find_by_name(name)
         if privilege:
             return {'message': "A privilege with the name '{}' already exists.".format(name)}, 400
 
@@ -45,16 +45,16 @@ class Priv(Resource):
         return priv.json(), 201
 
     def delete(self, name):
-        priv = PrivModel.find_by_name(name)
+        priv = OrgUserModel.find_by_name(name)
         if priv:
             priv.delete_from_db()
             return {'message': 'Privilege deleted successfully.'}
         return {'message': "A privilege with the name '{}' was not found.".format(name)}, 400
 
     def put(self, name):
-        data = Priv.parser.parse_args()
+        data = OrgUser.parser.parse_args()
 
-        priv = PrivModel.find_by_name(name)
+        orguser = OrgUserModel.find_by_name(name)
 
         if priv is None:
             priv = PrivModel(name)
@@ -65,6 +65,6 @@ class Priv(Resource):
             priv.save_to_db()
         return pirv.json()
 
-class PrivList(Resource):
+class OrgUserList(Resource):
     def get(self):
-        return {'privs': [priv.json() for priv in PrivModel.query.all()]}
+        return {'orgsusers': [orguser.json() for orguser in OrgUserModel.query.all()]}
