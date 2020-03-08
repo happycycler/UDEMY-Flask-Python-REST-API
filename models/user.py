@@ -48,7 +48,7 @@ class UserModel(db.Model):
                 "email": self.email,
                 "password": self.password,
                 "validationcode": self.validationcode,
-                "active": self.active,
+                "status": 'ACTIVE' if self.active == 1 else 'INACTIVE' ,
                 "sendmailfl": self.sendemailfl,
                 "carrierid": self.carrierid,
                 "carrier": self.carrier.carriername,
