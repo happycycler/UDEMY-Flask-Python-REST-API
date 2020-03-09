@@ -1,5 +1,6 @@
 from db import db
 from datetime import datetime
+from platform import system
 
 class SubrequestModel(db.Model):
     __tablename__ = 'subrequests'
@@ -32,9 +33,9 @@ class SubrequestModel(db.Model):
         return {"id": self.id,
                 "classid": self.classid,
                 "classname": self.course.name,
-                "starttime": self.course.starttime.strftime("%-I:%M %p"),
-                "endtime": self.course.endtime.strftime("%-I:%M %p"),
-                "classdate": self.course.classdate.__str__(),
+                "starttime": self.course.starttime.strftime("%#I:%M %p") if system() == 'Windows' else self.course.starttime.strftime("%-I:%M %p"),
+                "endtime": self.course.endtime.strftime("%#I:%M %p") if system() == 'Windows' else self.course.endtime.strftime("%-I:%M %p"),
+                "classdate": self.course.classdate.strftime("%m/%d/%Y"),
                 "orgid": self.course.orgid,
                 "orgname": self.course.org.name,
                 "subrequeststatus": subrequeststatus,
