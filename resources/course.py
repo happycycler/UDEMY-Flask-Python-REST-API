@@ -76,4 +76,4 @@ class Course(Resource):
 
 class CourseList(Resource):
     def get(self):
-        return {'course': [course.json() for course in CourseModel.query.all()]}
+        return {'courses': [course.json() for course in CourseModel.query.all()]}
