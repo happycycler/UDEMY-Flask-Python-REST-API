@@ -24,13 +24,26 @@ class SubrequestModel(db.Model):
         else:
             acceptusername = self.acceptuser.firstname + ' ' + self.acceptuser.lastname
 
+        if self.acceptuserid == None:
+            subrequeststatus = 'requested'
+        else:
+            subrequeststatus = 'accepted'
+
         return {"id": self.id,
                 "classid": self.classid,
                 "classname": self.course.name,
+                "starttime": self.course.starttime.strftime("%I:%M %p"),
+                "endtime": self.course.endtime.strftime("%I:%M %p"),
+                "classdate": self.course.classdate.__str__(),
+                "orgid": self.course.orgid,
+                "orgname": self.course.org.name,
+                "subrequeststatus": subrequeststatus,
+                "userid": self.course.userid,
+                "originstructor": self.course.instructor.firstname + " " + self.course.instructor.lastname,
                 "requestuserid": self.requestuserid,
                 "requestuser": self.requestuser.firstname + ' ' + self.requestuser.lastname,
                 "acceptuserid": self.acceptuserid,
-                "acceptuser": acceptusername,
+                "acceptinstructor": acceptusername,
                 "requestdate": self.requestdate.__str__(),
                 "acceptdate": self.acceptdate.__str__()}
 

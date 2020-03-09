@@ -32,7 +32,7 @@ class CourseModel(db.Model):
     def json(self):
         return {"id": self.id,
                 "orgid": self.orgid,
-                "org": self.org.name,
+                "orgname": self.org.name,
                 "name": self.name,
                 "starttime": self.starttime.strftime("%I:%M %p"),
                 "endtime": self.endtime.strftime("%I:%M %p"),
