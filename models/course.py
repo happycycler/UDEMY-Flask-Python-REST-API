@@ -32,6 +32,8 @@ class CourseModel(db.Model):
         self.userid = userid
 
     def json(self):
+        print(datetime.today())
+
         return {"id": self.id,
                 "orgid": self.orgid,
                 "orgname": self.org.name,
@@ -60,5 +62,5 @@ class CourseModel(db.Model):
         return cls.query.filter_by(id=_id).first()
 
     @classmethod
-    def find_by_userid(cls, userid):
-        return cls.query.filter_by(userid=userid).all()
+    def find_by_userid(cls, uid):
+        return cls.query.filter(cls.userid==uid).filter(cls.classdate>=datetime.today()).all()

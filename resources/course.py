@@ -25,20 +25,11 @@ class Course(Resource):
             return {'message': "A course with id '{}' was not found.".format(data['id'])}, 400
         elif data['userid'] is not None:
             courses = CourseModel.find_by_userid(data['userid'])
-            # return {'course': [course.json() for course in cls.query.filter_by(userid=userid)]}
             if courses:
                 return {'courses': [course.json() for course in courses]}
             return {'message': "No courses for userid '{}' were found.".format(data['userid'])}, 400
         else:
             return {'message': "Parameter 'id' or 'userid' is required."}, 400
-
-
-
-    # def get(self, userid):
-    #     course = CourseModel.find_by_userid(userid)
-    #     if course:
-    #         return course.json()
-    #     return {'message': "A course with the name '{}' was not found.".format(userid)}, 400
 
     def post(self, name):
         course = CourseModel.find_by_name(name)
@@ -76,4 +67,4 @@ class Course(Resource):
 
 class CourseList(Resource):
     def get(self):
-        return {'courses': [course.json() for course in CourseModel.query.all()]}
+        return {'courses': [course.json() for course in CourseModel.query.filter(cls.classdate>=datetime.today()).all()]}
