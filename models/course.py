@@ -32,8 +32,6 @@ class CourseModel(db.Model):
         self.userid = userid
 
     def json(self):
-        print(datetime.today())
-
         return {"id": self.id,
                 "orgid": self.orgid,
                 "orgname": self.org.name,

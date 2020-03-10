@@ -1,5 +1,6 @@
 from flask_restful import Resource, reqparse
 from models.course import CourseModel
+from datetime import datetime
 
 class Course(Resource):
     getparser = reqparse.RequestParser()
@@ -67,4 +68,4 @@ class Course(Resource):
 
 class CourseList(Resource):
     def get(self):
-        return {'courses': [course.json() for course in CourseModel.query.filter(cls.classdate>=datetime.today()).all()]}
+        return {'courses': [course.json() for course in CourseModel.query.all()]}
