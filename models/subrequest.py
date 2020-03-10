@@ -5,12 +5,14 @@ from platform import system
 class SubrequestModel(db.Model):
     __tablename__ = 'subrequests'
 
-    id = db.Column(db.Integer, primary_key=True)
-    classid = db.Column(db.Integer, db.ForeignKey('classes.id'))
+    # id = db.Column(db.Integer, primary_key=True)
+    classid = db.Column(db.Integer, db.ForeignKey('classes.id'), primary_key=True)
     requestuserid = db.Column(db.Integer, db.ForeignKey('users.id'))
     acceptuserid = db.Column(db.Integer, db.ForeignKey('users.id'))
     requestdate = db.Column(db.String)
     acceptdate = db.Column(db.String)
+
+    subrequest = db.relationship('CourseModel')
 
     def __init__(self, classid, requestuserid, acceptuserid, requestdate, acceptdate):
         self.classid = classid
@@ -30,8 +32,7 @@ class SubrequestModel(db.Model):
         else:
             subrequeststatus = 'accepted'
 
-        return {"id": self.id,
-                "classid": self.classid,
+        return {"classid": self.classid,
                 "classname": self.course.name,
                 "starttime": self.course.starttime.strftime("%#I:%M %p") if system() == 'Windows' else self.course.starttime.strftime("%-I:%M %p"),
                 "endtime": self.course.endtime.strftime("%#I:%M %p") if system() == 'Windows' else self.course.endtime.strftime("%-I:%M %p"),
@@ -60,9 +61,9 @@ class SubrequestModel(db.Model):
     def find_by_id(cls, _id):
         return cls.query.filter_by(id=_id).first()
 
-    @classmethod
-    def find_by_classid(cls, classid):
-        return cls.query.filter_by(classid=classid).all()
+    # @classmethod
+    def find_by_classid(classid):
+        return SubrequestModel.query.filter_by(classid=classid).first()
 
     @classmethod
     def find_by_requestuserid(cls, requestuserid):

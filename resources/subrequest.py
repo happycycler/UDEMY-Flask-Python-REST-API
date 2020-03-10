@@ -36,9 +36,10 @@ class Subrequest(Resource):
                 return subrequest.json()
             return {'message': "A subrequest with id '{}' was not found.".format(data['id'])}, 400
         elif data['classid'] is not None:
-            subrequests = SubrequestModel.find_by_classid(data['classid'])
-            if subrequests:
-                return {'subrequests': [subrequest.json() for subrequest in subrequests]}
+            subrequest = SubrequestModel.find_by_classid(data['classid'])
+            if subrequest:
+                return subrequest.json()
+                # return {'subrequests': [subrequest.json() for subrequest in subrequests]}
             return {'message': "A subrequest with classid '{}' was not found.".format(data['classid'])}, 400
         elif data['requestuserid'] is not None:
             subrequests = SubrequestModel.find_by_requestuserid(data['requestuserid'])
@@ -51,7 +52,7 @@ class Subrequest(Resource):
                 return {'subrequests': [subrequest.json() for subrequest in subrequests]}
             return {'message': "A subrequest with acceptuserid '{}' was not found.".format(data['acceptuserid'])}, 400
         else:
-            return {'message': "Parameter 'id', 'name', 'requestuserid', or 'acceptuserid' is required."}, 400
+            return {'message': "Parameter 'id', 'classid', 'requestuserid', or 'acceptuserid' is required."}, 400
 
     def post(self, classid):
         subrequest = SubrequestModel.find_by_classid(classid)

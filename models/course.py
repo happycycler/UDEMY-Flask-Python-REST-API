@@ -1,5 +1,7 @@
 from db import db
 from datetime import datetime
+from platform import system
+from models.subrequest import SubrequestModel
 
 class CourseModel(db.Model):
     __tablename__ = 'classes'
@@ -15,8 +17,8 @@ class CourseModel(db.Model):
     classdays = db.Column(db.Text)
     userid = db.Column(db.Integer, db.ForeignKey('users.id'))
 
-    course = db.relationship('SubrequestModel', backref='course', lazy='dynamic',
-                                foreign_keys='SubrequestModel.classid')
+    subrequests = db.relationship('SubrequestModel', backref='course',
+                                    lazy='dynamic', foreign_keys='SubrequestModel.classid')
 
     def __init__(self, orgid, name, starttime, endtime, classdate, startdate, enddate, classdays, userid):
         self.orgid = orgid
@@ -34,14 +36,15 @@ class CourseModel(db.Model):
                 "orgid": self.orgid,
                 "orgname": self.org.name,
                 "name": self.name,
-                "starttime": self.starttime.strftime("%I:%M %p"),
-                "endtime": self.endtime.strftime("%I:%M %p"),
-                "classdate": self.classdate.__str__(),
-                "startdate": self.startdate.__str__(),
-                "enddate": self.enddate.__str__(),
+                "starttime": self.starttime.strftime("%#I:%M %p") if system() == 'Windows' else self.starttime.strftime("%-I:%M %p"),
+                "endtime": self.endtime.strftime("%#I:%M %p") if system() == 'Windows' else self.endtime.strftime("%-I:%M %p"),\
+                "classdate": self.classdate.strftime("%m/%d/%Y"),
+                "startdate": self.startdate.strftime("%m/%d/%Y"),
+                "enddate": self.enddate.strftime("%m/%d/%Y"),
                 "classdays": self.classdays,
                 "userid": self.userid,
-                "instructor": self.instructor.firstname + " " + self.instructor.lastname}
+                "instructor": self.instructor.firstname + " " + self.instructor.lastname,
+                "subrequests": [subrequest.json() for subrequest in self.subrequests.all()]}
 
 
     def save_to_db(self):
