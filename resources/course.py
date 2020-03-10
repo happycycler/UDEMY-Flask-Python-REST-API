@@ -27,7 +27,7 @@ class Course(Resource):
             courses = CourseModel.find_by_userid(data['userid'])
             # return {'course': [course.json() for course in cls.query.filter_by(userid=userid)]}
             if courses:
-                return {'course': [course.json() for course in courses]}
+                return {'courses': [course.json() for course in courses]}
             return {'message': "No courses for userid '{}' were found.".format(data['userid'])}, 400
         else:
             return {'message': "Parameter 'id' or 'userid' is required."}, 400
