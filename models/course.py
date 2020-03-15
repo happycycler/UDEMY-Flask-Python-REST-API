@@ -37,6 +37,13 @@ class CourseModel(db.Model):
         self.acceptdate = acceptdate
 
     def json(self):
+        subrequeststatus = None
+        if self.requestuserid != None and self.acceptuserid != None:
+            subrequeststatus = 'accepted'
+
+        if self.requestuserid != None and self.acceptuserid == None:
+            subrequeststatus = 'requested'
+
         return {"id": self.id,
                 "orgid": self.orgid,
                 "orgname": self.org.name,
@@ -56,7 +63,8 @@ class CourseModel(db.Model):
                 "requestdate": self.requestdate.strftime("%m/%d/%Y") if self.requestuserid != None else None,
                 "acceptuserid": self.acceptuserid,
                 "acceptinstructor": self.acceptuser.firstname + " " + self.acceptuser.lastname if self.acceptuserid != None else None,
-                "acceptdate": self.acceptdate.strftime("%m/%d/%Y") if self.acceptuserid != None else None}
+                "acceptdate": self.acceptdate.strftime("%m/%d/%Y") if self.acceptuserid != None else None,
+                "subrequeststatus": subrequeststatus}
 
     def save_to_db(self):
         db.session.add(self)
