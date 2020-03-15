@@ -19,10 +19,10 @@ class UserModel(db.Model):
 
     instructor = db.relationship('CourseModel', backref='instructor', lazy='dynamic',
                                     foreign_keys='CourseModel.userid')
-    requester = db.relationship('SubrequestModel', backref='requestuser', lazy='dynamic',
-                                    foreign_keys='SubrequestModel.requestuserid')
-    acceptor = db.relationship('SubrequestModel', backref='acceptuser', lazy='dynamic',
-                                    foreign_keys='SubrequestModel.acceptuserid')
+    requester = db.relationship('CourseModel', backref='requestuser', lazy='dynamic',
+                                    foreign_keys='CourseModel.requestuserid')
+    acceptor = db.relationship('CourseModel', backref='acceptuser', lazy='dynamic',
+                                    foreign_keys='CourseModel.acceptuserid')
     orguseruser = db.relationship('OrgUserModel', backref='user', lazy='dynamic',
                                     foreign_keys='OrgUserModel.userid')
 

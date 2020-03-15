@@ -16,11 +16,12 @@ class CourseModel(db.Model):
     enddate = db.Column(db.Date)
     classdays = db.Column(db.Text)
     userid = db.Column(db.Integer, db.ForeignKey('users.id'))
+    requestuserid = db.Column(db.Integer, db.ForeignKey('users.id'))
+    requestdate = db.Column(db.Date)
+    acceptuserid = db.Column(db.Integer, db.ForeignKey('users.id'))
+    acceptdate = db.Column(db.Date)
 
-    subrequests = db.relationship('SubrequestModel', backref='course',
-                                    lazy='dynamic', foreign_keys='SubrequestModel.classid')
-
-    def __init__(self, orgid, name, starttime, endtime, classdate, startdate, enddate, classdays, userid):
+    def __init__(self, orgid, name, starttime, endtime, classdate, startdate, enddate, classdays, userid, requestuserid, requestdate, acceptuserid, acceptdate):
         self.orgid = orgid
         self.name = name
         self.starttime = starttime
@@ -30,6 +31,10 @@ class CourseModel(db.Model):
         self.enddate = enddate
         self.classdays = classdays
         self.userid = userid
+        self.requestuserid = requestuserid
+        self.requestdate = requestdate
+        self.acceptuserid = acceptuserid
+        self.acceptdate = acceptdate
 
     def json(self):
         return {"id": self.id,
@@ -44,8 +49,14 @@ class CourseModel(db.Model):
                 "classdays": self.classdays,
                 "userid": self.userid,
                 "instructor": self.instructor.firstname + " " + self.instructor.lastname,
-                "subrequests": [subrequest.json() for subrequest in self.subrequests.all()]}
-
+                "classid": self.id,
+                "originstructor": self.instructor.firstname + " " + self.instructor.lastname,
+                "requestuserid": self.requestuserid,
+                "requestuser": self.requestuser.firstname + " " + self.requestuser.lastname if self.requestuserid != None else None,
+                "requestdate": self.requestdate.strftime("%m/%d/%Y") if self.requestuserid != None else None,
+                "acceptuserid": self.acceptuserid,
+                "acceptinstructor": self.acceptuser.firstname + " " + self.acceptuser.lastname if self.acceptuserid != None else None,
+                "acceptdate": self.acceptdate.strftime("%m/%d/%Y") if self.acceptuserid != None else None}
 
     def save_to_db(self):
         db.session.add(self)
@@ -61,4 +72,5 @@ class CourseModel(db.Model):
 
     @classmethod
     def find_by_userid(cls, uid):
-        return cls.query.filter(cls.userid==uid).filter(cls.classdate>=datetime.today()).all()
+        # return cls.query.filter(cls.userid==uid).filter(cls.classdate>=datetime.today()).all()
+        return cls.query.filter(cls.userid == uid).all()
