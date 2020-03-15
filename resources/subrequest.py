@@ -1,93 +1,69 @@
 from flask_restful import Resource, reqparse
 from models.subrequest import SubrequestModel
+from datetime import datetime
 
-class Subrequest(Resource):
+class SubRequest(Resource):
     getparser = reqparse.RequestParser()
     getparser.add_argument(
         'id',
         type=int,
-        required=False,
-        help='ID is required.'
+        required=False
     )
     getparser.add_argument(
-        'classid',
+        'userid',
         type=int,
-        required=False,
-        help='Class ID is required.'
-    )
-    getparser.add_argument(
-        'requestuserid',
-        type=int,
-        required=False,
-        help='Request User ID is required.'
-    )
-    getparser.add_argument(
-        'acceptuserid',
-        type=int,
-        required=False,
-        help='Accept User ID is required.'
+        required=False
     )
 
     def get(self):
-        data = Subrequest.getparser.parse_args()
+        data = Course.getparser.parse_args()
         if data['id'] is not None:
-            subrequest = SubrequestModel.find_by_id(data['id'])
-            if subrequest:
-                return subrequest.json()
-            return {'message': "A subrequest with id '{}' was not found.".format(data['id'])}, 400
-        elif data['classid'] is not None:
-            subrequest = SubrequestModel.find_by_classid(data['classid'])
-            if subrequest:
-                return subrequest.json()
-                # return {'subrequests': [subrequest.json() for subrequest in subrequests]}
-            return {'message': "A subrequest with classid '{}' was not found.".format(data['classid'])}, 400
-        elif data['requestuserid'] is not None:
-            subrequests = SubrequestModel.find_by_requestuserid(data['requestuserid'])
-            if subrequests:
-                return {'subrequests': [subrequest.json() for subrequest in subrequests]}
-            return {'message': "A subrequest with requestuserid '{}' was not found.".format(data['requestuserid'])}, 400
-        elif data['acceptuserid'] is not None:
-            subrequests = SubrequestModel.find_by_acceptuserid(data['acceptuserid'])
-            if subrequests:
-                return {'subrequests': [subrequest.json() for subrequest in subrequests]}
-            return {'message': "A subrequest with acceptuserid '{}' was not found.".format(data['acceptuserid'])}, 400
+            course = CourseModel.find_by_id(data['id'])
+            if course:
+                return course.json()
+            return {'message': "A course with id '{}' was not found.".format(data['id'])}, 400
+        elif data['userid'] is not None:
+            courses = CourseModel.find_by_userid(data['userid'])
+            if courses:
+                return {'courses': [course.json() for course in courses]}
+            return {'message': "No courses for userid '{}' were found.".format(data['userid'])}, 400
         else:
-            return {'message': "Parameter 'id', 'classid', 'requestuserid', or 'acceptuserid' is required."}, 400
+            return {'message': "Parameter 'id' or 'userid' is required."}, 400
 
-    def post(self, classid):
-        subrequest = SubrequestModel.find_by_classid(classid)
-        if subrequest:
-            return {'message': "A subrequest with the classid '{}' already exists.".format(classid)}, 400
+    def post(self, name):
+        course = CourseModel.find_by_name(name)
+        if course:
+            return {'message': "A course with the name '{}' already exists.".format(name)}, 400
 
-        subrequest = SubrequestModel(name)
+        course = CourseModel(name)
         try:
-            subrequest.save_to_db()
+            course.save_to_db()
         except:
-            return {'message': "An error occurred inserting the subrequest."}, 500
+            return {'message': "An error occurred inserting the course."}, 500
 
-        return subrequest.json(), 201
+        return course.json(), 201
 
     def delete(self, name):
-        subrequest = SubrequestModel.find_by_name(name)
-        if subrequest:
-            subrequest.delete_from_db()
-            return {'message': 'Subrequest deleted successfully.'}
-        return {'message': "A subrequest with the name '{}' was not found.".format(name)}, 400
+        course = CourseModel.find_by_name(name)
+        if course:
+            course.delete_from_db()
+            return {'message': 'Course deleted successfully.'}
+        return {'message': "A course with the name '{}' was not found.".format(name)}, 400
 
     def put(self, name):
-        data = Subrequest.parser.parse_args()
+        data = Course.parser.parse_args()
 
-        subrequest = SubrequestModel.find_by_name(name)
+        course = CourseModel.find_by_name(name)
 
-        if subrequest is None:
-            subrequest = SubrequestModel(name)
+        if course is None:
+            course = CourseModel(name)
         else:
-            # subrequest.name = data['name']
-            return {'message': "A subrequest with the name '{}' was not found.".format(data['name'])}, 400
+            # course.name = data['name']
+            return {'message': "A course with the name '{}' was not found.".format(data['name'])}, 400
 
-            subrequest.save_to_db()
-        return subrequest.json()
+            course.save_to_db()
+        return course.json()
 
-class SubrequestList(Resource):
+class CourseList(Resource):
     def get(self):
-        return {'subrequests': [subrequest.json() for subrequest in SubrequestModel.query.all()]}
+        return {'courses': [course.json() for course in CourseModel.query.all()]}
