@@ -20,6 +20,23 @@ class Course(Resource):
         required=False
     )
 
+    putparser = reqparse.RequestParser()
+    putparser.add_argument(
+        'id',
+        type=int,
+        required=False
+    )
+    putparser.add_argument(
+        'userid',
+        type=int,
+        required=False
+    )
+    putparser.add_argument(
+        'type',
+        type=str,
+        required=False
+    )
+
     def get(self):
         data = Course.getparser.parse_args()
         if data['id'] is not None:
@@ -35,10 +52,9 @@ class Course(Resource):
         else:
             return {'message': "Parameter 'id' or 'userid' is required."}, 400
 
-    def post(self, name):
-        course = CourseModel.find_by_name(name)
-        if course:
-            return {'message': "A course with the name '{}' already exists.".format(name)}, 400
+    def post(self, id):
+        data = Course.putparser.parse_args()
+        course = CourseModel.find_by_id(data['id'])
 
         course = CourseModel(name)
         try:
@@ -55,16 +71,23 @@ class Course(Resource):
             return {'message': 'Course deleted successfully.'}
         return {'message': "A course with the name '{}' was not found.".format(name)}, 400
 
-    def put(self, name):
-        data = Course.parser.parse_args()
+    def put(self):
+        data = Course.putparser.parse_args()
+        course = CourseModel.find_by_id(data['id'])
 
-        course = CourseModel.find_by_name(name)
+        if course:
+            if data['type'] == 'confirmrequest':
+                course.requestuserid = data['userid']
+                course.requestdate = datetime.today()
+                course.save_to_db()
 
-        if course is None:
-            course = CourseModel(name)
+            if data['type'] == 'cancelrequest':
+                course.requestuserid = None
+                course.requestdate = None
+                course.save_to_db()
+
         else:
-            # course.name = data['name']
-            return {'message': "A course with the name '{}' was not found.".format(data['name'])}, 400
+            return {'message': "A course with the id '{}' was not found.".format(data['id'])}, 400
 
             course.save_to_db()
         return course.json()
