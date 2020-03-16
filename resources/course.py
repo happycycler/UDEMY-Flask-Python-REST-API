@@ -76,12 +76,12 @@ class Course(Resource):
         course = CourseModel.find_by_id(data['id'])
 
         if course:
-            if data['type'] == 'confirmrequest':
+            if data['type'] == "confirmrequest":
                 course.requestuserid = data['userid']
                 course.requestdate = datetime.today()
                 course.save_to_db()
 
-            if data['type'] == 'cancelrequest':
+            if data['type'] == "cancelrequest":
                 course.requestuserid = None
                 course.requestdate = None
                 course.save_to_db()
