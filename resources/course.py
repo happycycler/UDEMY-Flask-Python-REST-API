@@ -86,6 +86,11 @@ class Course(Resource):
                 course.requestdate = None
                 course.save_to_db()
 
+            if data['type'] == "takeclass":
+                course.acceptuserid = data['userid']
+                course.acceptdate = datetime.today()
+                course.save_to_db()
+
             if data['type'] == "canceltake":
                 course.acceptuserid = None
                 course.acceptdate = None
