@@ -86,6 +86,11 @@ class Course(Resource):
                 course.requestdate = None
                 course.save_to_db()
 
+            if data['type'] == "canceltake":
+                course.acceptuserid = None
+                course.acceptdate = None
+                course.save_to_db()
+
         else:
             return {'message': "A course with the id '{}' was not found.".format(data['id'])}, 400
 

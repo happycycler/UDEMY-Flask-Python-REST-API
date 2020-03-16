@@ -82,7 +82,7 @@ class CourseModel(db.Model):
     def find_by_userid(cls, uid, subrequests):
         # return cls.query.filter(cls.userid==uid).filter(cls.classdate>=datetime.today()).all()
         if subrequests == 'true':
-            return cls.query.filter(cls.userid == uid).filter(cls.classdate >= datetime.today()).filter(cls.requestuserid != None).order_by(cls.classdate, cls.starttime, cls.name).all()
+            return cls.query.filter(cls.classdate >= datetime.today()).filter(cls.requestuserid != None).order_by(cls.classdate, cls.starttime, cls.name).all()
         else:
             # return cls.query.filter(cls.userid == uid).filter(cls.classdate >= datetime.today()).order_by(cls.classdate, cls.starttime, cls.name).all()
             return cls.query.filter(cls.userid == uid).filter(cls.classdate >= datetime.today()).order_by(cls.classdate, cls.starttime, cls.name).all()
