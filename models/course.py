@@ -49,7 +49,7 @@ class CourseModel(db.Model):
                 "orgname": self.org.name,
                 "name": self.name,
                 "starttime": self.starttime.strftime("%#I:%M %p") if system() == 'Windows' else self.starttime.strftime("%-I:%M %p"),
-                "endtime": self.endtime.strftime("%#I:%M %p") if system() == 'Windows' else self.endtime.strftime("%-I:%M %p"),\
+                "endtime": self.endtime.strftime("%#I:%M %p") if system() == 'Windows' else self.endtime.strftime("%-I:%M %p"),
                 "classdate": self.classdate.strftime("%m/%d/%Y"),
                 "startdate": self.startdate.strftime("%m/%d/%Y"),
                 "enddate": self.enddate.strftime("%m/%d/%Y"),

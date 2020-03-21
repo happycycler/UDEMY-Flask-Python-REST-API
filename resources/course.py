@@ -1,6 +1,8 @@
 from flask_restful import Resource, reqparse
 from models.course import CourseModel
-from datetime import datetime
+from datetime import datetime, timedelta
+from platform import system
+import json
 
 class Course(Resource):
     getparser = reqparse.RequestParser()
@@ -18,6 +20,48 @@ class Course(Resource):
         'allrequests',
         type=str,
         required=False
+    )
+
+    postparser = reqparse.RequestParser()
+    postparser.add_argument(
+        'classname',
+        type=str,
+        required=True
+    )
+    postparser.add_argument(
+        'startdate',
+        type=str,
+        required=True
+    )
+    postparser.add_argument(
+        'enddate',
+        type=str,
+        required=True
+    )
+    postparser.add_argument(
+        'starttime',
+        type=str,
+        required=True
+    )
+    postparser.add_argument(
+        'endtime',
+        type=str,
+        required=True
+    )
+    postparser.add_argument(
+        'orgid',
+        type=int,
+        required=True
+    )
+    postparser.add_argument(
+        'userid',
+        type=int,
+        required=True
+    )
+    postparser.add_argument(
+        'classdays',
+        type=str,
+        required=True
     )
 
     putparser = reqparse.RequestParser()
@@ -52,17 +96,55 @@ class Course(Resource):
         else:
             return {'message': "Parameter 'id' or 'userid' is required."}, 400
 
-    def post(self, id):
-        data = Course.putparser.parse_args()
-        course = CourseModel.find_by_id(data['id'])
+    def post(self):
+        data = Course.postparser.parse_args()
 
-        course = CourseModel(name)
-        try:
-            course.save_to_db()
-        except:
-            return {'message': "An error occurred inserting the course."}, 500
+        classname = data['classname']
+        startdate = datetime.strptime(data['startdate'], "%Y-%m-%d")
+        enddate = datetime.strptime(data['enddate'], "%Y-%m-%d") + timedelta(days=1)
+        starttime = datetime.strptime(data['starttime'], "%I:%M %p") if system() == 'Windows' else datetime.strptime(data['starttime'], "%-I:%M %p")
+        endtime = datetime.strptime(data['endtime'], "%I:%M %p") if system() == 'Windows' else datetime.strptime(data['endtime'], "%-I:%M %p")
+        orgid = data['orgid']
+        userid = data['userid']
+        if data['classdays'] == None:
+            classdays = [datetime.weekday(startdate)]
+        else:
+            classdays = list(map(int, data['classdays'].split(',')))
 
-        return course.json(), 201
+        print(classdays)
+
+        jsonstr = []
+        msgstr = []
+        for n in range(int ((enddate - startdate).days)):
+            classdate = startdate + timedelta(n)
+            day = datetime.weekday(classdate)
+            # print(datetime.strftime(classdate, "%Y-%m-%d") + ' - ' + str(day))
+            if day in classdays:
+                # print(classdate)
+                # print(datetime.strftime(starttime, "%H:%M"))
+                # print(datetime.strftime(endtime, "%H:%M"))
+                course = CourseModel(orgid,
+                                     classname,
+                                     datetime.strftime(starttime, "%H:%M"),
+                                     datetime.strftime(endtime, "%H:%M"),
+                                     datetime.strftime(classdate, "%Y-%m-%d"),
+                                     datetime.strftime(startdate, "%Y-%m-%d"),
+                                     datetime.strftime(enddate, "%Y-%m-%d"),
+                                     data['classdays'] if data['classdays'] != None else datetime.weekday(startdate),
+                                     userid,
+                                     None,
+                                     None,
+                                     None,
+                                     None)
+                try:
+                    course.save_to_db()
+                except:
+                    messages.append({'status': "ERROR", "code": 500})
+                jsonstr.append(course.json())
+
+        msgstr.append({'status': "SUCCESS", "code": 200})
+        # jsonstr.append({'status': "SUCCESS", "code": 200})
+        return {'courses': jsonstr,'messages': msgstr}
 
     def delete(self, name):
         course = CourseModel.find_by_name(name)
