@@ -100,7 +100,7 @@ class Course(Resource):
 
         classname = data['classname']
         startdate = datetime.strptime(data['startdate'], "%Y-%m-%d")
-        enddate = datetime.strptime(data['enddate'], "%Y-%m-%d") + timedelta(days=1)
+        enddate = datetime.strptime(data['enddate'], "%Y-%m-%d")
         # starttime = datetime.strptime(data['starttime'], "%I:%M %p") if system() == 'Windows' else datetime.strptime(data['starttime'], "%-I:%M %p")
         # endtime = datetime.strptime(data['endtime'], "%I:%M %p") if system() == 'Windows' else datetime.strptime(data['endtime'], "%-I:%M %p")
         starttime = datetime.strptime(data['starttime'], "%I:%M %p")
@@ -114,7 +114,7 @@ class Course(Resource):
 
         jsonstr = []
         msgstr = []
-        for n in range(int ((enddate - startdate).days)):
+        for n in range(int (((enddate + timedelta(days=1)) - startdate).days)):
             classdate = startdate + timedelta(n)
             day = datetime.weekday(classdate)
             # print(datetime.strftime(classdate, "%Y-%m-%d") + ' - ' + str(day))
