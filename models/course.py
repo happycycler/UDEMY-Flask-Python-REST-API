@@ -81,7 +81,7 @@ class CourseModel(db.Model):
     @classmethod
     def find_by_userid(cls, uid, allrequests):
         if allrequests == 'true':
-            return cls.query.filter(cls.classdate >= datetime.today()).filter(cls.requestuserid != None).order_by(cls.classdate, cls.starttime, cls.name).all()
+            return cls.query.filter(cls.classdate >= datetime.today().date()).filter(cls.requestuserid != None).order_by(cls.classdate, cls.starttime, cls.name).all()
         else:
             # return cls.query.filter(cls.userid == uid).filter(cls.classdate >= datetime.today()).order_by(cls.classdate, cls.starttime, cls.name).all()
-            return cls.query.filter(cls.userid == uid).filter(cls.classdate >= datetime.today()).order_by(cls.classdate, cls.starttime, cls.name).all()
+            return cls.query.filter(cls.userid == uid).filter(cls.classdate >= datetime.today().date()).order_by(cls.classdate, cls.starttime, cls.name).all()
