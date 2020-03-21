@@ -138,7 +138,7 @@ class Course(Resource):
                 try:
                     course.save_to_db()
                 except:
-                    messages.append({'status': "ERROR", "code": 500})
+                    msgstr.append({'status': "ERROR", "code": 500})
                 jsonstr.append(course.json())
 
         msgstr.append({'status': "SUCCESS", "code": 200})
