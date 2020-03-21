@@ -186,4 +186,4 @@ class Course(Resource):
 class CourseList(Resource):
     def get(self):
         # return {'courses': [course.json() for course in CourseModel.query.all()]}
-        return {'courses': [course.json() for course in CourseModel.query.filter(CourseModel.classdate >= datetime.today()).order_by(CourseModel.classdate,CourseModel.starttime,CourseModel.name).all()]}
+        return {'courses': [course.json() for course in CourseModel.query.filter(CourseModel.classdate >= datetime.today().date()).order_by(CourseModel.classdate,CourseModel.starttime,CourseModel.name).all()]}
