@@ -107,8 +107,7 @@ class Course(Resource):
         endtime = datetime.strptime(data['endtime'], "%I:%M %p")
         orgid = data['orgid']
         userid = data['userid']
-        print('classdays: ' + data['classdays'])
-        if data['classdays'] == None:
+        if data['classdays'] is None:
             classdays = [datetime.weekday(startdate)]
         else:
             classdays = list(map(int, data['classdays'].split(',')))
