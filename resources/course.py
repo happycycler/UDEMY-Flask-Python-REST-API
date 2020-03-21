@@ -80,6 +80,13 @@ class Course(Resource):
         required=False
     )
 
+    deleteparser = reqparse.RequestParser()
+    deleteparser.add_argument(
+        'id',
+        type=int,
+        required=True
+    )
+
     def get(self):
         data = Course.getparser.parse_args()
         if data['id'] is not None:
@@ -137,25 +144,31 @@ class Course(Resource):
                                      None)
                 try:
                     course.save_to_db()
+                    msgstr.append({'status': "SUCCESS", "code": 200})
                 except:
                     msgstr.append({'status': "ERROR", "code": 500})
                 jsonstr.append(course.json())
 
-        msgstr.append({'status': "SUCCESS", "code": 200})
-        # jsonstr.append({'status': "SUCCESS", "code": 200})
         return {'courses': jsonstr,'messages': msgstr}
 
-    def delete(self, name):
-        course = CourseModel.find_by_name(name)
+    def delete(self):
+        data = Course.getparser.parse_args()
+        course = CourseModel.find_by_id(data['id'])
+        msgstr = []
         if course:
             course.delete_from_db()
-            return {'message': 'Course deleted successfully.'}
-        return {'message': "A course with the name '{}' was not found.".format(name)}, 400
+            msgstr.append({'status': "SUCCESS", "code": 200, "message": "Course with ID {} deleted successfully!".format(data['id'])})
+        else:
+            msgstr.append({'status': "ERROR", "code": 500, "message": "Course with ID {} not found!".format(data['id'])})
+
+        return {'messages': msgstr}
 
     def put(self):
         data = Course.putparser.parse_args()
         course = CourseModel.find_by_id(data['id'])
 
+        jsonstr = []
+        msgstr = []
         if course:
             if data['type'] == "confirmrequest":
                 course.requestuserid = data['userid']
@@ -177,11 +190,13 @@ class Course(Resource):
                 course.acceptdate = None
                 course.save_to_db()
 
-        else:
-            return {'message': "A course with the id '{}' was not found.".format(data['id'])}, 400
+            msgstr.append({'status': "SUCCESS", "code": 200,
+                           "message": "Course with ID {} updated successfully!".format(data['id'])})
+            return {'courses': course.json(), 'messages': msgstr}
 
-            course.save_to_db()
-        return course.json()
+        else:
+            msgstr.append({'status': "ERROR", "code": 500, "message": "Course with ID {} not found!".format(data['id'])})
+            return {'messages': msgstr}
 
 class CourseList(Resource):
     def get(self):
