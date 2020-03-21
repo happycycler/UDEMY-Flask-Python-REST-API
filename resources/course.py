@@ -2,7 +2,6 @@ from flask_restful import Resource, reqparse
 from models.course import CourseModel
 from datetime import datetime, timedelta
 from platform import system
-import json
 
 class Course(Resource):
     getparser = reqparse.RequestParser()
@@ -102,16 +101,16 @@ class Course(Resource):
         classname = data['classname']
         startdate = datetime.strptime(data['startdate'], "%Y-%m-%d")
         enddate = datetime.strptime(data['enddate'], "%Y-%m-%d") + timedelta(days=1)
-        starttime = datetime.strptime(data['starttime'], "%I:%M %p") if system() == 'Windows' else datetime.strptime(data['starttime'], "%-I:%M %p")
-        endtime = datetime.strptime(data['endtime'], "%I:%M %p") if system() == 'Windows' else datetime.strptime(data['endtime'], "%-I:%M %p")
+        # starttime = datetime.strptime(data['starttime'], "%I:%M %p") if system() == 'Windows' else datetime.strptime(data['starttime'], "%-I:%M %p")
+        # endtime = datetime.strptime(data['endtime'], "%I:%M %p") if system() == 'Windows' else datetime.strptime(data['endtime'], "%-I:%M %p")
+        starttime = datetime.strptime(data['starttime'], "%I:%M %p")
+        endtime = datetime.strptime(data['endtime'], "%I:%M %p")
         orgid = data['orgid']
         userid = data['userid']
         if data['classdays'] == None:
             classdays = [datetime.weekday(startdate)]
         else:
             classdays = list(map(int, data['classdays'].split(',')))
-
-        print(classdays)
 
         jsonstr = []
         msgstr = []
