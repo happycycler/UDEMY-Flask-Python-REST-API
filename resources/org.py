@@ -6,14 +6,66 @@ class Org(Resource):
     getparser.add_argument(
         'id',
         type=int,
-        required=False,
-        help='Org ID is required.'
+        required=False
     )
     getparser.add_argument(
         'name',
+        type=str,
+        required=False
+    )
+
+    postparser = reqparse.RequestParser()
+    postparser.add_argument(
+        'id',
         type=int,
-        required=False,
-        help='Org Name is required.'
+        required=False
+    )
+    postparser.add_argument(
+        'orgname',
+        type=str,
+        required=False
+    )
+    postparser.add_argument(
+        'address1',
+        type=str,
+        required=False
+    )
+    postparser.add_argument(
+        'address2',
+        type=str,
+        required=False
+    )
+    postparser.add_argument(
+        'phone',
+        type=str,
+        required=False
+    )
+    postparser.add_argument(
+        'city',
+        type=str,
+        required=False
+    )
+    postparser.add_argument(
+        'state',
+        type=str,
+        required=False
+    )
+    postparser.add_argument(
+        'zip',
+        type=str,
+        required=False
+    )
+    postparser.add_argument(
+        'status',
+        type=str,
+        required=False
+    )
+
+    deleteparser = reqparse.RequestParser()
+    deleteparser.add_argument(
+        'id',
+        type=int,
+        required=True
     )
 
     def get(self):
@@ -31,33 +83,41 @@ class Org(Resource):
         else:
             return {'message': "Parameter 'id' or 'name' is required."}, 400
 
-    # def get(self, userid):
-    #     org = OrgModel.find_by_userid(userid)
-    #     if org:
-    #         return org.json()
-    #     return {'message': "A org with the name '{}' was not found.".format(userid)}, 400
+    def post(self):
+        data = Org.postparser.parse_args()
 
-    def post(self, name):
-        org = OrgModel.find_by_name(name)
-        if org:
-            return {'message': "A org with the name '{}' already exists.".format(name)}, 400
+        name = data['orgname'];
+        address1 = data['address1'];
+        address2 = data['address2'];
+        phone = data['phone'];
+        city = data['city'];
+        state = data['state'];
+        zip = data['zip'];
+        status = data['status'];
 
-        org = OrgModel(name)
+        msgstr = []
+        org = OrgModel(name, address1, address2, phone, city, state, zip, status)
         try:
             org.save_to_db()
+            msgstr.append({'status': "SUCCESS", "code": 200})
         except:
-            return {'message': "An error occurred inserting the org."}, 500
+            msgstr.append({'status': "ERROR", "code": 500, "message": "An error occurred inserting the org."})
 
-        return org.json(), 201
+        return {'orgs': org.json(),'messages': msgstr}
 
-    def delete(self, name):
-        org = OrgModel.find_by_name(name)
+    def delete(self):
+        data = Org.getparser.parse_args()
+        org = OrgModel.find_by_id(data['id'])
+        msgstr = []
         if org:
             org.delete_from_db()
-            return {'message': 'Org deleted successfully.'}
-        return {'message': "A org with the name '{}' was not found.".format(name)}, 400
+            msgstr.append({'status': "SUCCESS", "code": 200, "message": "Org with ID {} deleted successfully!".format(data['id'])})
+        else:
+            msgstr.append({'status': "ERROR", "code": 500, "message": "Org with ID {} not found!".format(data['id'])})
 
-    def put(self, name):
+        return {'messages': msgstr}
+
+    def put(self):
         data = Org.parser.parse_args()
 
         org = OrgModel.find_by_name(name)
