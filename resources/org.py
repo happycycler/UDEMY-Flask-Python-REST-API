@@ -105,7 +105,14 @@ class Org(Resource):
         print(status);
 
         msgstr = []
-        org = OrgModel(name, address1, address2 if data['address2'] != None else None, city, state, zip, phone, status)
+        org = OrgModel(name=name,
+                       address1=address1,
+                       address2=address2 if data['address2'] != None else None,
+                       city=city,
+                       state=state,
+                       zip=zip,
+                       phone=phone,
+                       status=status)
         try:
             org.save_to_db()
             msgstr.append({'status': "SUCCESS", "code": 200})
@@ -127,18 +134,34 @@ class Org(Resource):
         return {'messages': msgstr}
 
     def put(self):
-        data = Org.parser.parse_args()
+        data = Org.postparser.parse_args()
+        org = OrgModel.find_by_id(data['id'])
 
-        org = OrgModel.find_by_name(name)
-
-        if org is None:
-            org = OrgModel(name)
-        else:
-            # org.name = data['name']
-            return {'message': "A org with the name '{}' was not found.".format(data['name'])}, 400
-
+        msgstr = []
+        if org:
+            print(data['orgname']);
+            print(data['address1']);
+            print(data['address2']);
+            print(data['city']);
+            print(data['state']);
+            print(data['zip']);
+            print(data['phone']);
+            print(data['status']);
+            org.name=data['orgname']
+            org.address1=data['address1']
+            org.address2=data['address2'] if data['address2'] != None else None
+            org.city=data['city']
+            org.state=data['state']
+            org.zip=data['zip']
+            org.phone=data['phone']
+            org.status=data['status']
             org.save_to_db()
-        return org.json()
+            msgstr.append({'status': "SUCCESS", "code": 200, "message": "Org with ID {} updated successfully!".format(data['id'])})
+            return {'orgs': org.json(), 'messages': msgstr}
+
+        else:
+            msgstr.append({'status': "ERROR", "code": 500, "message": "Org with ID {} not found!".format(data['id'])})
+            return {'messages': msgstr}
 
 class OrgList(Resource):
     def get(self):
