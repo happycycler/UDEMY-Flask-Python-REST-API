@@ -1,5 +1,5 @@
 from db import db
-from datetime import datetime
+from datetime import datetime, timedelta
 from platform import system
 from models.subrequest import SubrequestModel
 
@@ -80,9 +80,10 @@ class CourseModel(db.Model):
 
     @classmethod
     def find_by_userid(cls, uid, allrequests):
-        print(datetime.strftime(datetime.today().date(), '%Y-%m-%d'))
         if allrequests == 'true':
-            return cls.query.filter(cls.classdate >= datetime.strftime(datetime.today().date(), '%Y-%m-%d')).filter(cls.requestuserid != None).order_by(cls.classdate, cls.starttime, cls.name).all()
+            print('GETting sub requests ...')
+            return cls.query.filter(cls.classdate >= (datetime.today().date() - timedelta(days=1))).filter(cls.requestuserid != None).order_by(cls.classdate, cls.starttime, cls.name).all()
         else:
             # return cls.query.filter(cls.userid == uid).filter(cls.classdate >= datetime.today()).order_by(cls.classdate, cls.starttime, cls.name).all()
-            return cls.query.filter(cls.userid == uid).filter(cls.classdate >= datetime.strftime(datetime.today().date(), '%Y-%m-%d')).order_by(cls.classdate, cls.starttime, cls.name).all()
+            print('GETting user courses ...')
+            return cls.query.filter(cls.userid == uid).filter(cls.classdate >= (datetime.today().date() - timedelta(days=1))).order_by(cls.classdate, cls.starttime, cls.name).all()
