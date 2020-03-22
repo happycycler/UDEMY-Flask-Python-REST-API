@@ -80,6 +80,7 @@ class CourseModel(db.Model):
 
     @classmethod
     def find_by_userid(cls, uid, allrequests):
+        print(datetime.strftime(datetime.today().date(), '%Y-%m-%d'))
         if allrequests == 'true':
             return cls.query.filter(cls.classdate >= datetime.strftime(datetime.today().date(), '%Y-%m-%d')).filter(cls.requestuserid != None).order_by(cls.classdate, cls.starttime, cls.name).all()
         else:
