@@ -98,14 +98,14 @@ class Org(Resource):
         print(name);
         print(address1);
         print(address2);
-        print(phone);
         print(city);
         print(state);
         print(zip);
+        print(phone);
         print(status);
 
         msgstr = []
-        org = OrgModel(name, address1, address2 if data['address2'] != None else None, phone, city, state, zip, status)
+        org = OrgModel(name, address1, address2 if data['address2'] != None else None, city, state, zip, phone, status)
         try:
             org.save_to_db()
             msgstr.append({'status': "SUCCESS", "code": 200})
