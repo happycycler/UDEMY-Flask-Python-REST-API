@@ -79,6 +79,26 @@ class Course(Resource):
         type=str,
         required=False
     )
+    putparser.add_argument(
+        'classname',
+        type=str,
+        required=False
+    )
+    putparser.add_argument(
+        'starttime',
+        type=str,
+        required=False
+    )
+    putparser.add_argument(
+        'endtime',
+        type=str,
+        required=False
+    )
+    putparser.add_argument(
+        'classdate',
+        type=str,
+        required=False
+    )
 
     deleteparser = reqparse.RequestParser()
     deleteparser.add_argument(
@@ -198,6 +218,13 @@ class Course(Resource):
             if data['type'] == "canceltake":
                 course.acceptuserid = None
                 course.acceptdate = None
+                course.save_to_db()
+
+            if data['type'] == "editclass":
+                course.name = data['classname']
+                course.starttime = data['starttime']
+                course.endtime = data['endtime']
+                course.classdate = data['classdate']
                 course.save_to_db()
 
             msgstr.append({'status': "SUCCESS", "code": 200,
