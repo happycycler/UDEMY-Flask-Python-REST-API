@@ -17,6 +17,58 @@ class User(Resource):
         help='Username is required.'
     )
 
+    postparser = reqparse.RequestParser()
+    postparser.add_argument(
+        'id',
+        type=int,
+        required=False
+    )
+    postparser.add_argument(
+        'username',
+        type=str,
+        required=False
+    )
+    postparser.add_argument(
+        'firstaname',
+        type=str,
+        required=False
+    )
+    postparser.add_argument(
+        'lastname',
+        type=str,
+        required=False
+    )
+    postparser.add_argument(
+        'email',
+        type=str,
+        required=False
+    )
+    postparser.add_argument(
+        'cellphone',
+        type=str,
+        required=False
+    )
+    postparser.add_argument(
+        'carrier',
+        type=int,
+        required=False
+    )
+    postparser.add_argument(
+        'sendemailfl',
+        type=int,
+        required=False
+    )
+    postparser.add_argument(
+        'sendtextfl',
+        type=int,
+        required=False
+    )
+    postparser.add_argument(
+        'status',
+        type=str,
+        required=False
+    )
+
     def get(self):
         data = User.getparser.parse_args()
         if data['id'] is not None:
@@ -31,6 +83,29 @@ class User(Resource):
             return {'message': "A user with username '{}' was not found.".format(data['username'])}, 400
         else:
             return {'message': "Parameter 'id' or 'username' is required."}, 400
+
+    def post(self):
+        data = postparser.parser.parse_args()
+
+        # username
+        # firstname
+        # lastname
+        # email
+        # password
+        # status
+        # sendemailfl
+        # carrierid
+        # cellphone
+        # sendtextfl
+        # privid
+
+        if user:
+            return {'message': "A user with that username already exists."}, 400
+
+        user = UserModel(data['username'], data['password'])
+        user.save_to_db()
+
+        return {"message": "User created successfully!"}, 201
 
     def delete(self, username):
         user = UserModel.find_by_username(username)

@@ -10,7 +10,7 @@ class UserModel(db.Model):
     email = db.Column(db.String(255))
     password = db.Column(db.String(255))
     validationcode = db.Column(db.String(255))
-    active = db.Column(db.Integer)
+    status = db.Column(db.String(10))
     sendemailfl = db.Column(db.Integer)
     carrierid = db.Column(db.Integer, db.ForeignKey('carriers.id'))
     cellphone = db.Column(db.String(25))
@@ -26,14 +26,14 @@ class UserModel(db.Model):
     orguseruser = db.relationship('OrgUserModel', backref='user', lazy='dynamic',
                                     foreign_keys='OrgUserModel.userid')
 
-    def __init__(self, firstname, lastname, username, email, password, validationcode, active, sendemailfl, carrierid, cellphone, sendtextfl, privid):
+    def __init__(self, firstname, lastname, username, email, password, validationcode, status, sendemailfl, carrierid, cellphone, sendtextfl, privid):
         self.firstname = firstname
         self.lastname = lastname
         self.username = username
         self.email = email
         self.password = password
         self.validationcode = validationcode
-        self.active = active
+        self.status = status
         self.sendemailfl = sendemailfl
         self.carrierid = carrierid
         self.cellphone = cellphone
@@ -48,7 +48,7 @@ class UserModel(db.Model):
                 "email": self.email,
                 "password": self.password,
                 "validationcode": self.validationcode,
-                "status": 'ACTIVE' if self.active == 1 else 'INACTIVE' ,
+                "status": self.status,
                 "sendmailfl": self.sendemailfl,
                 "carrierid": self.carrierid,
                 "carrier": self.carrier.carriername,

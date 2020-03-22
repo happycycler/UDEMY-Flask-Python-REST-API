@@ -136,8 +136,6 @@ class Course(Resource):
         classname = data['classname']
         startdate = datetime.strptime(data['startdate'], "%Y-%m-%d")
         enddate = datetime.strptime(data['enddate'], "%Y-%m-%d")
-        # starttime = datetime.strptime(data['starttime'], "%I:%M %p") if system() == 'Windows' else datetime.strptime(data['starttime'], "%-I:%M %p")
-        # endtime = datetime.strptime(data['endtime'], "%I:%M %p") if system() == 'Windows' else datetime.strptime(data['endtime'], "%-I:%M %p")
         starttime = datetime.strptime(data['starttime'], "%I:%M %p")
         endtime = datetime.strptime(data['endtime'], "%I:%M %p")
         orgid = data['orgid']
@@ -152,24 +150,20 @@ class Course(Resource):
         for n in range(int (((enddate + timedelta(days=1)) - startdate).days)):
             classdate = startdate + timedelta(n)
             day = datetime.weekday(classdate)
-            # print(datetime.strftime(classdate, "%Y-%m-%d") + ' - ' + str(day))
             if day in classdays:
-                # print(classdate)
-                # print(datetime.strftime(starttime, "%H:%M"))
-                # print(datetime.strftime(endtime, "%H:%M"))
-                course = CourseModel(orgid,
-                                     classname,
-                                     datetime.strftime(starttime, "%H:%M"),
-                                     datetime.strftime(endtime, "%H:%M"),
-                                     datetime.strftime(classdate, "%Y-%m-%d"),
-                                     datetime.strftime(startdate, "%Y-%m-%d"),
-                                     datetime.strftime(enddate, "%Y-%m-%d"),
-                                     data['classdays'] if data['classdays'] != None else datetime.weekday(startdate),
-                                     userid,
-                                     None,
-                                     None,
-                                     None,
-                                     None)
+                course = CourseModel(orgid=orgid,
+                                     name=classname,
+                                     starttime=datetime.strftime(starttime, "%H:%M"),
+                                     endtime=datetime.strftime(endtime, "%H:%M"),
+                                     classdate=datetime.strftime(classdate, "%Y-%m-%d"),
+                                     startdate=datetime.strftime(startdate, "%Y-%m-%d"),
+                                     enddate=datetime.strftime(enddate, "%Y-%m-%d"),
+                                     classdays=data['classdays'] if data['classdays'] != None else datetime.weekday(startdate),
+                                     userid=userid,
+                                     requestuserid=None,
+                                     requestdate=None,
+                                     acceptuserid=None,
+                                     acceptdate=None)
                 try:
                     course.save_to_db()
                     msgstr.append({'status': "SUCCESS", "code": 200})
