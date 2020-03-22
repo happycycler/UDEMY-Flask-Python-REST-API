@@ -89,18 +89,26 @@ class Course(Resource):
 
     def get(self):
         data = Course.getparser.parse_args()
+        msgstr = []
         if data['id'] is not None:
             course = CourseModel.find_by_id(data['id'])
             if course:
-                return course.json()
-            return {'message': "A course with id '{}' was not found.".format(data['id'])}, 400
+                msgstr.append({'status': "SUCCESS", "code": 200})
+                return {'courses': course.json(),'messages': msgstr}
+            msgstr.append({"status": "NULL", "code": 400, "message": "A course with ID '{}' was not found.".format(data['id'])})
         elif data['userid'] is not None:
             courses = CourseModel.find_by_userid(data['userid'], data['allrequests'])
             if courses:
-                return {'courses': [course.json() for course in courses]}
-            return {'message': "No courses for userid '{}' were found.".format(data['userid'])}, 400
+                msgstr.append({"status": "SUCCESS", "code": 200})
+                return {'courses': [course.json() for course in courses], 'messages': msgstr}
+            if data['allrequests'] == None:
+                msgstr.append({"status": "NULL", "code": 400, "message": "No courses for USERID '{}' were found.".format(data['userid'])})
+            else:
+                msgstr.append({"status": "NULL", "code": 400, "message": "No sub requests found."})
         else:
-            return {'message': "Parameter 'id' or 'userid' is required."}, 400
+            msgstr.append({"status": "ERROR", "code": 400})
+
+        return {'messages': msgstr}
 
     def post(self):
         data = Course.postparser.parse_args()
@@ -178,6 +186,8 @@ class Course(Resource):
             if data['type'] == "cancelrequest":
                 course.requestuserid = None
                 course.requestdate = None
+                course.acceptuserid = None
+                course.acceptdate = None
                 course.save_to_db()
 
             if data['type'] == "takeclass":
