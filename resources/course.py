@@ -114,7 +114,7 @@ class Course(Resource):
             course = CourseModel.find_by_id(data['id'])
             if course:
                 msgstr.append({'status': "SUCCESS", "code": 200})
-                return {'courses': course.json(),'messages': msgstr}
+                return {'courses': course.json(), 'messages': msgstr}
             msgstr.append({"status": "NULL", "code": 400, "message": "A course with ID '{}' was not found.".format(data['id'])})
         elif data['userid'] is not None:
             courses = CourseModel.find_by_userid(data['userid'], data['allrequests'])

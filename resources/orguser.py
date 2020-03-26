@@ -2,36 +2,39 @@ from flask_restful import Resource, reqparse
 from models.orguser import OrgUserModel
 
 class OrgUser(Resource):
-    getparser = reqparse.RequestParser()
-    getparser.add_argument(
+    parser = reqparse.RequestParser()
+    parser.add_argument(
         'orgid',
         type=int,
-        required=False,
-        help='Org ID is required.'
+        required=False
     )
-    getparser.add_argument(
+    parser.add_argument(
         'userid',
         type=str,
-        required=False,
-        help='User ID is required.'
+        required=False
     )
 
     def get(self):
-        data = OrgUser.getparser.parse_args()
+        data = OrgUser.parser.parse_args()
+        msgstr = []
         if data['orgid'] is not None:
             orgs = OrgUserModel.find_by_orgid(data['orgid'])
             if orgs:
-                return {'orgs': [org.json() for org in orgs]}
-            return {'message': "An org with id '{}' was not found.".format(data['orgid'])}, 400
+                msgstr.append({'status': "SUCCESS", "code": 200})
+                return {'orgs': [orguser.json() for orguser in orgs], 'messages': msgstr}
+            msgstr.append({"status": "NULL", "code": 400, "message": "An org with ORGID '{}' was not found.".format(data['orgid'])})
         elif data['userid'] is not None:
             users = OrgUserModel.find_by_userid(data['userid'].upper())
             if users:
-                return {'users': [user.json() for user in users]}
-            return {'message': "A user with id '{}' was not found.".format(data['name'])}, 400
+                msgstr.append({'status': "SUCCESS", "code": 200})
+                return {'users': [orguser.json() for orguser in users], 'messages': msgstr}
+            msgstr.append({"status": "NULL", "code": 400, "message": "A user with USERID '{}' was not found.".format(data['userid'])})
         else:
-            return {'message': "Parameter 'orgid' or 'userid' is required."}, 400
+            msgstr.append({"status": "ERROR", "code": 400})
 
-    def post(self, name):
+        return {'messages': msgstr}
+
+    def post(self, *args):
         privilege = OrgUserModel.find_by_name(name)
         if privilege:
             return {'message': "A privilege with the name '{}' already exists.".format(name)}, 400
@@ -44,17 +47,38 @@ class OrgUser(Resource):
 
         return priv.json(), 201
 
-    def delete(self, name):
-        priv = OrgUserModel.find_by_name(name)
-        if priv:
-            priv.delete_from_db()
-            return {'message': 'Privilege deleted successfully.'}
-        return {'message': "A privilege with the name '{}' was not found.".format(name)}, 400
+    def delete(self, *args):
+        data = OrgUser.parser.parse_args()
+        msgstr = []
+        if data['orgid'] is not None:
+            orguser = OrgUserModel.find_by_orgid(data['orgid'])
+            if orguser:
+                if OrgUserModel.delete_by_orgid(orgid=data['orgid']):
+                    msgstr.append({'status': "SUCCESS", "code": 200, "message": "OrgUser with ORGID {} deleted successfully!".format(data['orgid'])})
+                else:
+                    msgstr.append({'status': "SUCCESS", "code": 400, "message": "There weas a problem deleting OrgUser with ORGID {}!".format(data['userid'])})
+            else:
+                msgstr.append({"status": "NULL", "code": 400, "message": "An OrgUser with ORGID '{}' was not found.".format(data['orgid'])})
 
-    def put(self, name):
+        elif data['userid'] is not None:
+            orguser = OrgUserModel.find_by_userid(data['userid'])
+            if orguser:
+                if OrgUserModel.delete_by_userid(userid=data['userid']):
+                    msgstr.append({'status': "SUCCESS", "code": 200, "message": "OrgUser with USERID {} deleted successfully!".format(data['userid'])})
+                else:
+                    msgstr.append({'status': "SUCCESS", "code": 400, "message": "There weas a problem deleting OrgUser with USERID {}!".format(data['userid'])})
+            else:
+                msgstr.append({"status": "NULL", "code": 400, "message": "An OrgUser with USERID '{}' was not found.".format(data['userid'])})
+
+        else:
+            msgstr.append({"status": "ERROR", "code": 400})
+
+        return {'messages': msgstr}
+
+    def put(self, orgid, userid):
         data = OrgUser.parser.parse_args()
 
-        orguser = OrgUserModel.find_by_name(name)
+        orguser = OrgUserModel.find_by_ids(orgid, userid)
 
         if priv is None:
             priv = PrivModel(name)

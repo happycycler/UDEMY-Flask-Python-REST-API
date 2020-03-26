@@ -20,9 +20,27 @@ class OrgUserModel(db.Model):
         db.session.add(self)
         db.session.commit()
 
-    def delete_from_db(self):
-        db.session.delete(self)
-        db.session.commit()
+    # def delete_from_db(self):
+    #     db.session.delete()
+    #     db.session.commit()
+
+    @classmethod
+    def delete_by_userid(cls, userid):
+        try:
+            cls.query.filter_by(userid=userid).delete()
+            db.session.commit()
+            return True
+        except:
+            return False
+
+    @classmethod
+    def delete_by_orgid(cls, orgid):
+        try:
+            cls.query.filter_by(orgid=orgid).delete()
+            db.session.commit()
+            return True
+        except:
+            return False
 
     @classmethod
     def find_by_orgid(cls, orgid):
