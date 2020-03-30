@@ -1,5 +1,4 @@
 from flask_restful import Resource, reqparse
-
 from models.user import UserModel
 
 class User(Resource):
@@ -29,7 +28,7 @@ class User(Resource):
         required=False
     )
     postparser.add_argument(
-        'firstaname',
+        'firstname',
         type=str,
         required=False
     )
@@ -49,7 +48,7 @@ class User(Resource):
         required=False
     )
     postparser.add_argument(
-        'carrier',
+        'carrierid',
         type=int,
         required=False
     )
@@ -68,6 +67,11 @@ class User(Resource):
         type=str,
         required=False
     )
+    postparser.add_argument(
+        'privid',
+        type=int,
+        required=False
+    )
 
     def get(self):
         data = User.getparser.parse_args()
@@ -83,6 +87,34 @@ class User(Resource):
             return {'message': "A user with username '{}' was not found.".format(data['username'])}, 400
         else:
             return {'message': "Parameter 'id' or 'username' is required."}, 400
+
+    def put(self):
+        data = User.postparser.parse_args()
+        user = UserModel.find_by_id(data['id'])
+        print(data["sendemailfl"])
+
+        jsonstr = []
+        msgstr = []
+        if user:
+            user.firstname = data["firstname"]
+            user.lastname = data["lastname"]
+            user.username = data["username"]
+            user.email = data["email"]
+            user.status = data["status"]
+            user.sendemailfl = data["sendemailfl"]
+            user.carrierid = data["carrierid"]
+            user.cellphone = data["cellphone"]
+            user.sendtextfl = data["sendtextfl"]
+            user.privid = data["privid"]
+            user.save_to_db()
+
+            msgstr.append({'status': "SUCCESS", "code": 200,
+                           "message": "User with ID {} updated successfully!".format(data['id'])})
+            return {'users': user.json(), 'messages': msgstr}
+
+        else:
+            msgstr.append({'status': "ERROR", "code": 500, "message": "User with ID {} not found!".format(data['id'])})
+            return {'messages': msgstr}
 
     def post(self):
         data = postparser.parser.parse_args()
